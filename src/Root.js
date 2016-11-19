@@ -2,13 +2,17 @@ import React, { PropTypes } from 'react';
 import { Provider } from 'react-redux'
 
 import App from './App'
+import DevTools from './containers/DevTools';
 
 import './Root.css'
 
 const Root = ({ store }) => {
     return (
         <Provider store={store} >
-            <App />
+            <div>
+                <App />
+                <DevTools />
+            </div>
         </Provider>
     )
 }
