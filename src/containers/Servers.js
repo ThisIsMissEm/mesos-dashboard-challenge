@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import { destroyServer } from '../actions';
 import Servers from '../components/Servers'
 
 const mapStateToProps = (state) => {
@@ -14,6 +15,15 @@ const mapStateToProps = (state) => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        destroy: (id) => {
+            dispatch(destroyServer(id))
+        }
+    }
+}
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Servers);
