@@ -5,6 +5,7 @@ import './App.css';
 
 import ApplicationsContainer from './containers/Applications'
 import ServersContainer from './containers/Servers'
+import NotificationsContainer from './containers/Notifications'
 
 import { createServer } from './actions'
 
@@ -17,18 +18,14 @@ class App extends Component {
                     <ApplicationsContainer />
                 </div>
                 <div className="App-Contents">
+                    <div className="App-Notifications">
+                        <NotificationsContainer />
+                    </div>
                     <ServersContainer />
-                    <ul>
-                        {this.props.notifications.map((notification) => <li key={notification.id}>{notification.message}</li>)}
-                    </ul>
                 </div>
             </div>
         );
     }
 }
 
-export default connect((state) => {
-    return {
-        notifications: state.notifications
-    }
-})(App);
+export default connect()(App);
