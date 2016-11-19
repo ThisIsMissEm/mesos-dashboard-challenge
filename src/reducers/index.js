@@ -47,8 +47,8 @@ const servers = (state = {}, action = {}) => {
         })
     }
 
-    if (action.type === 'server/destroy') {
-        return removeById(state, action.id);
+    if (action.type === 'server/destroyed') {
+        return removeById(state, action.payload.id);
     }
 
     return state
@@ -123,6 +123,10 @@ const instancesByServer = (state = {}, action) => {
         return Object.assign({}, state, {
             [action.payload.id]: []
         });
+    }
+
+    if (action.type === 'server/destroyed') {
+        return removeById(state, action.payload.id);
     }
 
     if (action.type === 'instances/created') {

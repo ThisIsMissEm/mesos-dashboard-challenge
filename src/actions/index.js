@@ -100,8 +100,10 @@ export const destroyServer = (id) => (dispatch, getState) => {
     }, {});
 
     dispatch({
-        type: "server/destroy",
-        id
+        type: "server/destroyed",
+        payload: {
+            id
+        }
     });
 
     Object.keys(moved).forEach((application) => {
