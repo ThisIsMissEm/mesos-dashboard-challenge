@@ -24,7 +24,7 @@ export const createTemporalNotification = (message) => (dispatch) => {
 
     setTimeout(() => {
         dispatch(destroyNotification(notification.payload.id));
-    }, 2000)
+    }, 5000)
 
     dispatch(notification);
 }
