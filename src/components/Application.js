@@ -11,7 +11,7 @@ const Application = ({
         <div>
             <div><strong>{name}</strong> {count.toString()}</div>
             <button onClick={() => create()}>Add</button>
-            <button onClick={() => destroy()}>Remove</button>
+            <button disabled={count === 0} onClick={() => destroy()}>Remove</button>
         </div>
     )
 }
