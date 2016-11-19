@@ -1,4 +1,5 @@
 import generateId from '../generateId';
+import { REQUEST } from '../middleware/api';
 
 export const createNotification = (message) => {
     return {
@@ -31,13 +32,27 @@ export const createTemporalNotification = (message) => (dispatch) => {
 
 export const createApplication = (name) => {
     return {
-        type: 'application/created',
-        payload: {
-            id: generateId('application'),
-            name: name
+        type: 'application/create',
+        [REQUEST]: {
+            response: 'application/created',
+            payload: {
+                name
+            }
         }
     }
-};
+}
+
+export const createInstance = (application) => {
+    return {
+        type: 'instances/create',
+        [REQUEST]: {
+            response: 'instances/created',
+            payload: {
+                application
+            }
+        }
+    }
+}
 
 export const addInstance = (server, application) => {
     return {
@@ -102,43 +117,55 @@ export const destroyInstanceOfApplication = (applicationId) => (dispatch, getSta
 
 export const createServer = () => {
     return {
-        type: "server/created",
-        payload: {
-            id: generateId('server'),
-            status: 'running'
+        type: 'server/create',
+        [REQUEST]: {
+            response: 'server/created'
         }
     }
 }
 
-export const destroyServer = (id) => (dispatch, getState) => {
-    const state = getState();
-    const instances = state.indexes.instancesByServer[id];
-
-    // Application => Count
-    const moved = instances.reduce((acc, instance) => {
-        const application = state.entities.instances[instance].application;
-
-        if (!acc[application]) {
-            acc[application] = 1;
-        } else {
-            acc[application]++;
+export const destroyServer = (id) => {
+    return {
+        type: 'server/destroy',
+        [REQUEST]: {
+            response: 'server/destroyed',
+            payload: {
+                id
+            }
         }
-
-        dispatch(removeInstance(instance, id, application));
-
-        return acc;
-    }, {});
-
-    dispatch({
-        type: "server/destroyed",
-        payload: {
-            id
-        }
-    });
-
-    Object.keys(moved).forEach((application) => {
-        for (var i = 0; i < moved[application]; i++) {
-            createInstanceOfApplication(application, getState(), dispatch);
-        }
-    });
+    }
 }
+
+
+// export const destroyServer = (id) => (dispatch, getState) => {
+//     const state = getState();
+//     const instances = state.indexes.instancesByServer[id];
+
+//     // Application => Count
+//     const moved = instances.reduce((acc, instance) => {
+//         const application = state.entities.instances[instance].application;
+
+//         if (!acc[application]) {
+//             acc[application] = 1;
+//         } else {
+//             acc[application]++;
+//         }
+
+//         dispatch(removeInstance(instance, id, application));
+
+//         return acc;
+//     }, {});
+
+//     dispatch({
+//         type: "server/destroyed",
+//         payload: {
+//             id
+//         }
+//     });
+
+//     Object.keys(moved).forEach((application) => {
+//         for (var i = 0; i < moved[application]; i++) {
+//             createInstanceOfApplication(application, getState(), dispatch);
+//         }
+//     });
+// }
