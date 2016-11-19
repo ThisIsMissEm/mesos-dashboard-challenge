@@ -148,6 +148,18 @@ const instancesByServer = (state = {}, action) => {
     return state;
 }
 
+const notifications = (state = [], action) => {
+    if (action.type === 'notification/created') {
+        return state.concat([action.payload]);
+    }
+
+    if (action.type === 'notification/destroyed') {
+        return state.filter((notification) => notification.id !== action.payload.id);
+    }
+
+    return state;
+}
+
 export default combineReducers({
     entities: combineReducers({
         servers,
@@ -158,5 +170,6 @@ export default combineReducers({
         instancesByApplication,
         instancesByServer,
         serverByInstance
-    })
+    }),
+    notifications
 });

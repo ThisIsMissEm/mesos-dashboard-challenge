@@ -1,5 +1,34 @@
 import generateId from '../generateId';
 
+export const createNotification = (message) => {
+    return {
+        type: 'notification/created',
+        payload: {
+            id: generateId('notification'),
+            message: message
+        }
+    }
+}
+
+export const destroyNotification = (id) => {
+    return {
+        type: 'notification/destroyed',
+        payload: {
+            id
+        }
+    }
+}
+
+export const createTemporalNotification = (message) => (dispatch) => {
+    const notification = createNotification(message);
+
+    setTimeout(() => {
+        dispatch(destroyNotification(notification.payload.id));
+    }, 2000)
+
+    dispatch(notification);
+}
+
 export const createApplication = (name) => {
     return {
         type: 'application/created',
@@ -46,6 +75,7 @@ const createInstanceOfApplication = (applicationId, state, dispatch) => {
     }
 
     if (!server) {
+        dispatch(createTemporalNotification(`Could not start instance of ${state.entities.applications[applicationId].name}; Not enought available servers`));
         return;
     }
 
