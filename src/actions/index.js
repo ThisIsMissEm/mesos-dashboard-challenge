@@ -36,6 +36,7 @@ export const addInstance = (server, application) => {
         type: 'instances/created',
         payload: {
             id: generateId('instance'),
+            createdAt: Date.now(),
             server,
             application
         }
