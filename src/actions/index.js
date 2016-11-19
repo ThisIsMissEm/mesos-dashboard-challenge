@@ -34,9 +34,9 @@ export const removeInstance = (id, server, application) => {
 };
 
 const createInstanceOfApplication = (applicationId, state, dispatch) => {
-    const servers = Object.keys(state.servers);
+    const servers = Object.keys(state.entities.servers);
     const instanceCountsByServer = servers.reduce((acc, server) => {
-        acc[server] = state.instancesByServer[server].length
+        acc[server] = state.indexes.instancesByServer[server].length
         return acc;
     }, {});
 
@@ -58,14 +58,14 @@ export const addInstanceOfApplication = (application) => (dispatch, getState) =>
 
 export const destroyInstanceOfApplication = (applicationId) => (dispatch, getState) => {
     const state = getState();
-    const instances = state.instancesByApplication[applicationId];
+    const instances = state.indexes.instancesByApplication[applicationId];
 
     if (instances.length === 0) {
         return;
     }
 
     const instanceId = instances[instances.length - 1];
-    const serverId = state.serverByInstance[instanceId];
+    const serverId = state.indexes.serverByInstance[instanceId];
 
     dispatch(removeInstance(instanceId, serverId, applicationId))
 }
@@ -82,11 +82,11 @@ export const createServer = () => {
 
 export const destroyServer = (id) => (dispatch, getState) => {
     const state = getState();
-    const instances = state.instancesByServer[id];
+    const instances = state.indexes.instancesByServer[id];
 
     // Application => Count
     const moved = instances.reduce((acc, instance) => {
-        const application = state.instances[instance].application;
+        const application = state.entities.instances[instance].application;
 
         if (!acc[application]) {
             acc[application] = 1;

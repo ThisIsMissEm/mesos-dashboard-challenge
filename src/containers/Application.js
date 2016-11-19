@@ -4,8 +4,12 @@ import { addInstanceOfApplication, destroyInstanceOfApplication } from '../actio
 import Application from '../components/Application'
 
 const mapStateToProps = (state, ownProps) => {
-    // Note: too much data
-    return state.applications[ownProps.id];
+    const application = state.entities.applications[ownProps.id];
+
+    return {
+        id: application.id,
+        name: application.name,
+    }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

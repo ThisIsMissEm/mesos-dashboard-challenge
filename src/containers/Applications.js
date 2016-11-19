@@ -6,7 +6,7 @@ import Applications from '../components/Applications'
 const mapStateToProps = (state) => {
     return {
         // Should be done in redux store
-        applications: Object.keys(state.applications)
+        applications: Object.keys(state.entities.applications)
     }
 }
 

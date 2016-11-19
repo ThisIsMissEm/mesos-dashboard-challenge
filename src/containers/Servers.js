@@ -7,9 +7,9 @@ import Servers from '../components/Servers'
 const mapStateToProps = (state) => {
     return {
         // Should be done in redux store
-        servers: Object.keys(state.servers).map((serverId) => {
-            return Object.assign({}, state.servers[serverId], {
-                instances: state.instancesByServer[serverId] || []
+        servers: Object.keys(state.entities.servers).map((serverId) => {
+            return Object.assign({}, state.entities.servers[serverId], {
+                instances: state.indexes.instancesByServer[serverId] || []
             });
         })
     }

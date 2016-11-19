@@ -149,10 +149,14 @@ const instancesByServer = (state = {}, action) => {
 }
 
 export default combineReducers({
-    servers,
-    applications,
-    instances,
-    instancesByApplication,
-    instancesByServer,
-    serverByInstance
+    entities: combineReducers({
+        servers,
+        applications,
+        instances
+    }),
+    indexes: combineReducers({
+        instancesByApplication,
+        instancesByServer,
+        serverByInstance
+    })
 });
