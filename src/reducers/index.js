@@ -40,69 +40,112 @@ const removeById = (state, id) => {
     return newState;
 }
 
-const servers = (state = {}, action = {}) => {
-    if (action.type === 'server/created') {
-        return Object.assign({}, state, {
-            [action.payload.id]: action.payload
-        })
-    }
+const createableEntity = (name, fallback) => {
+    const created = `${name}/created`;
+    const destroyed = `${name}/destroyed`;
 
-    if (action.type === 'server/destroyed') {
-        return removeById(state, action.payload.id);
-    }
+    return (state = {}, action) => {
+        if (action.type === created) {
+            return Object.assign({}, state, {
+                [action.payload.id]: action.payload
+            })
+        }
 
-    return state
-}
+        if (action.type === destroyed) {
+            return removeById(state, action.payload.id);
+        }
 
-const applications = (state = {}, action = {}) => {
-    if (action.type === 'application/created') {
-        return Object.assign({}, state, {
-            [action.payload.id]: action.payload
-        })
-    }
-
-    return state;
-}
-
-const instances = (state = {}, action = {}) => {
-    if (action.type === 'instances/created') {
-        return Object.assign({}, state, {
-            [action.payload.id]: action.payload
-        })
-    }
-
-    if (action.type === 'instances/destroyed') {
-        return removeById(state, action.payload.id);
-    }
-
-    return state;
-}
-
-const instancesByApplication = (state = {}, action) => {
-    if (action.type === 'application/created') {
-        return Object.assign({}, state, {
-            [action.payload.id]: []
-        });
-    }
-
-    if (action.type === 'instances/created') {
-        return update(state, {
-            [action.payload.application]: {
-                $add: action.payload.id
+        if (fallback) {
+            const result = fallback(state, action);
+            if (result) {
+                return result;
             }
-        });
-    }
+        }
 
-    if (action.type === 'instances/destroyed') {
-        return update(state, {
-            [action.payload.application]: {
-                $remove: action.payload.id
-            }
-        });
-    }
-
-    return state;
+        return state;
+    };
 }
+
+const createMapIndex = (actions) => {
+    const { create, destroy, add, remove } = actions;
+
+    return (state = {}, action) => {
+        if (action.type === create.type) {
+            return Object.assign({}, state, {
+                [action.payload[create.key]]: []
+            });
+        }
+
+        if (action.type === destroy.type) {
+            return removeById(state, action.payload[destroy.key]);
+        }
+
+        if (action.type === add.type) {
+            return update(state, {
+                [action.payload[add.key]]: {
+                    $add: action.payload[add.value]
+                }
+            });
+        }
+
+        if (action.type === remove.type) {
+            return update(state, {
+                [action.payload[remove.key]]: {
+                    $remove: action.payload[remove.value]
+                }
+            });
+        }
+
+        return state;
+    }
+}
+
+const servers = createableEntity('server');
+const applications = createableEntity('application');
+const instances = createableEntity('instances');
+
+const instancesByApplication = createMapIndex({
+    create: {
+        type: 'application/created',
+        key: 'id'
+    },
+    destroy: {
+        type: 'application/destroyed',
+        key: 'id'
+    },
+    add: {
+        type: 'instances/created',
+        key: 'application',
+        value: 'id'
+    },
+    remove: {
+        type: 'instances/destroyed',
+        key: 'application',
+        value: 'id'
+    }
+});
+
+
+const instancesByServer = createMapIndex({
+    create: {
+        type: 'server/created',
+        key: 'id'
+    },
+    destroy: {
+        type: 'server/destroyed',
+        key: 'id'
+    },
+    add: {
+        type: 'instances/created',
+        key: 'server',
+        value: 'id'
+    },
+    remove: {
+        type: 'instances/destroyed',
+        key: 'server',
+        value: 'id'
+    }
+});
 
 const serverByInstance = (state = {}, action) => {
     if (action.type === 'instances/created') {
@@ -113,36 +156,6 @@ const serverByInstance = (state = {}, action) => {
 
     if (action.type === 'instances/destroyed') {
         return removeById(state, action.payload.id);
-    }
-
-    return state;
-}
-
-const instancesByServer = (state = {}, action) => {
-    if (action.type === 'server/created') {
-        return Object.assign({}, state, {
-            [action.payload.id]: []
-        });
-    }
-
-    if (action.type === 'server/destroyed') {
-        return removeById(state, action.payload.id);
-    }
-
-    if (action.type === 'instances/created') {
-        return update(state, {
-            [action.payload.server]: {
-                $add: action.payload.id
-            }
-        });
-    }
-
-    if (action.type === 'instances/destroyed') {
-        return update(state, {
-            [action.payload.server]: {
-                $remove: action.payload.id
-            }
-        });
     }
 
     return state;
