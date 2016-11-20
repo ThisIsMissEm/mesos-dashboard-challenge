@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import { createInstance, destroyInstanceOfApplication } from '../actions';
+import { createInstance, destroyInstance } from '../actions';
 import Application from '../components/Application'
 
 const mapStateToProps = (state, ownProps) => {
@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(createInstance(ownProps.id))
         },
         destroy: () => {
-            dispatch(destroyInstanceOfApplication(ownProps.id))
+            dispatch(destroyInstance(ownProps.id))
         }
     }
 }

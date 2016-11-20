@@ -88,7 +88,7 @@ const HANDLERS = {
             id: serverId
         }
     },
-    'instances/create': function(request, store) {
+    'application/instances/create': function(request, store) {
         const applicationId = request.payload.application;
         const state = store.getState();
 
@@ -107,12 +107,34 @@ const HANDLERS = {
             return;
         }
 
+        const instanceId = generateId('instance');
+        const serverId = availableSlots[0];
+
         return {
-            id: generateId('instance'),
+            id: instanceId,
             createdAt: Date.now(),
             application: applicationId,
-            server: availableSlots[0]
+            server: serverId,
         }
+    },
+    'application/instances/destroy': function(request, store) {
+        const applicationId = request.payload.application;
+
+        const state = store.getState();
+
+        const instances = state.indexes.instancesByApplication[applicationId];
+        if (instances.length === 0) {
+            return;
+        }
+
+        const instanceId = instances[instances.length - 1];
+        const serverId = state.indexes.serverByInstance[instanceId];
+
+        return {
+            id: instanceId,
+            application: applicationId,
+            server: serverId
+        };
     }
 }
 
