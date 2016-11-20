@@ -1,14 +1,28 @@
-.App {
+body {
   text-align: left;
+  background: #111;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-weight: 300;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-height: 100%;
+  height: 100%;
 }
 
 .App-Container {
+  min-height: 100%;
   display: flex;
+  align-items: stretch;
 }
 .App-Sidebar {
-  background-color: #222;
-  width: 200px;
-  padding: 20px;
+  background-color: #333;
+  width: 240px;
+  padding: 20px 0;
   color: white;
 }
 .App-Contents {
@@ -22,4 +36,105 @@
   top: 10px;
   left: 10px;
   right: 10px;
+  z-index: 1000;
+}
+
+.Applications {
+  list-style: none;
+  padding: 0;
+}
+
+.Applications li {
+  margin: 0;
+  width: 100%;
+}
+
+.Applications li > div {
+  padding: 5px 5px 5px 30px;
+  border-left: 3px solid #666;
+}
+
+.Server {
+  background: #222;
+  color: lightgray;
+  padding: 10px;
+  margin: 0 0 20px;
+  height: 250px;
+}
+.Server > h3 {
+  font-size: 12px;
+  font-family: monospace;
+  float: left;
+}
+
+.Server > button {
+  float: right;
+}
+
+.Instances {
+  clear: both;
+  position: relative;
+  display: flex;
+}
+.Instance {
+  position: relative;
+  flex-basis: 48%;
+  height: 150px;
+  padding: 10px;
+  margin: 1%;
+  background:#333;
+  color: white;
+  /*text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);*/
+  transition: background-color 0.2s;
+  transition: opacity 0.2;
+}
+.Instance div {
+  position: relative;
+  z-index: 1;
+}
+.Instance::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+      140deg,
+      rgba(0, 0, 0, 0.25),
+      rgba(0, 0, 0, 0.1) 30%,
+      rgba(0, 0, 0, 0) 50%
+  );
+}
+
+@keyframes pulsate {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+    100% {  opacity: 0.2; }
+}
+
+.Instance--starting {
+  animation: pulsate 0.5s ease-out;
+  animation-iteration-count: infinite;
+  opacity: 0.0
+}
+
+.Instance--stopping {
+  background: #666;
+  animation: pulsate 0.5s ease-out;
+  animation-iteration-count: infinite;
+  opacity: 1.0
+}
+
+.Instance header h3 {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.Instance p {
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.Instance pre {
+  display: none;
 }

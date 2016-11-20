@@ -30,13 +30,13 @@ export const createTemporalNotification = (message) => (dispatch) => {
     dispatch(notification);
 }
 
-export const createApplication = (name) => {
+export const createApplication = (name, color) => {
     return {
         type: 'application/create',
         [REQUEST]: {
-            response: 'application/created',
             payload: {
-                name
+                name,
+                color
             }
         }
     }
@@ -46,7 +46,6 @@ export const destroyApplication = (id) => {
     return {
         type: 'application/destroy',
         [REQUEST]: {
-            response: 'application/destroyed',
             payload: {
                 id
             }
@@ -59,7 +58,6 @@ export const createInstance = (application) => {
     return {
         type: 'application/instances/create',
         [REQUEST]: {
-            response: 'instances/created',
             payload: {
                 application
             }
@@ -71,7 +69,6 @@ export const destroyInstance = (application) => {
     return {
         type: 'application/instances/destroy',
         [REQUEST]: {
-            response: 'instances/destroyed',
             payload: {
                 application
             }
@@ -82,9 +79,7 @@ export const destroyInstance = (application) => {
 export const createServer = () => {
     return {
         type: 'server/create',
-        [REQUEST]: {
-            response: 'server/created'
-        }
+        [REQUEST]: {}
     }
 }
 
@@ -92,7 +87,6 @@ export const destroyServer = (id) => {
     return {
         type: 'server/destroy',
         [REQUEST]: {
-            response: 'server/destroyed',
             payload: {
                 id
             }

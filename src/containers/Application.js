@@ -7,11 +7,9 @@ const mapStateToProps = (state, ownProps) => {
     const application = state.entities.applications[ownProps.id];
     const instances = state.indexes.instancesByApplication[ownProps.id];
 
-    return {
-        id: application.id,
-        name: application.name,
-        count: instances.length
-    }
+    return Object.assign({}, application, {
+        instancesCount: instances.length
+    });
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

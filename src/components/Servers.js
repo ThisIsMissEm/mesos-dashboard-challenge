@@ -4,10 +4,12 @@ import InstanceContainer from '../containers/Instance';
 
 const Server = ({ id, instances, onDestroy }) => {
     return (
-        <div>
+        <div className="Server">
             <h3>{id}</h3>
             <button onClick={() => onDestroy(id)}>Destroy</button>
-            {instances.map((id) => <li key={id}><InstanceContainer id={id} /></li>)}
+            <div className="Instances">
+                {instances.map((id) => <InstanceContainer key={id} id={id} />)}
+            </div>
         </div>
     )
 }

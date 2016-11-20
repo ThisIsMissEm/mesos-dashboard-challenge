@@ -1,10 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
-const Instance = ({ id, applicationName, createdAt }) => {
+const Instance = ({ id, application, instance }) => {
+    let className = "Instance";
+
+    if (instance.status === 'starting') {
+        className += " Instance--starting";
+    }
+
+    if (instance.status === 'stopping') {
+        className += " Instance--stopping";
+    }
+
+    const style = {
+        backgroundColor: application.color
+    }
+
     return (
-        <div>
-            Name: {applicationName}, Id: {id}, Created At: {createdAt}
+        <div className={className} style={style}>
+            <div>
+                <header>
+                    <h3>{application.name}</h3>
+                </header>
+                <p>{id}</p>
+
+                <pre><code>{JSON.stringify(instance, null, 2)}</code></pre>
+            </div>
         </div>
     );
 }
@@ -14,8 +35,8 @@ const mapStateToProps = (state, ownProps) => {
 
     return {
         id: instance.id,
-        createdAt: (new Date(instance.createdAt)).toLocaleString(),
-        applicationName: state.entities.applications[instance.application].name
+        application: state.entities.applications[instance.application],
+        instance: instance
     }
 }
 

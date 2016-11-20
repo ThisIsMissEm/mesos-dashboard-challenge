@@ -3,15 +3,22 @@ import React from 'react'
 const Application = ({
     id,
     name,
-    count,
+    color,
+    instancesCount,
     create,
     destroy
 }) => {
+    const style = {
+        borderColor: color
+    };
+
     return (
-        <div>
-            <div><strong>{name}</strong> {count.toString()}</div>
+        <div style={style}>
+            <header>
+                <strong>{name}</strong> {instancesCount}
+            </header>
             <button onClick={() => create()}>Add</button>
-            <button disabled={count === 0} onClick={() => destroy()}>Remove</button>
+            <button disabled={instancesCount === 0} onClick={() => destroy()}>Remove</button>
         </div>
     )
 }

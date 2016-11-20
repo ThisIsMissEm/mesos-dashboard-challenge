@@ -29,18 +29,63 @@ const findAvailableSlots = (servers, instancesByServer) => {
     }, []);
 }
 
-const HANDLERS = {
-    'application/create': function(request) {
-        return {
-            id: generateId('application'),
-            name: request.payload.name
-        }
-    },
-    'server/create': function(request) {
-        return {
-            id: generateId('server'),
+const startInstance = (store, application, server) => {
+    const instanceId = generateId('instance');
+
+    setTimeout(() => store.dispatch({
+        type: 'instances/update-status',
+        payload: {
+            id: instanceId,
             status: 'running'
         }
+    }), 1000)
+
+    store.dispatch({
+        type: 'instances/created',
+        payload: {
+            id: instanceId,
+            createdAt: Date.now(),
+            application: application,
+            server: server,
+            status: 'starting'
+        }
+    })
+};
+
+const destroyInstance = (store, instance) => {
+    store.dispatch({
+        type: 'instances/update-status',
+        payload: {
+            id: instance.id,
+            status: 'stopping'
+        }
+    })
+
+    setTimeout(() => store.dispatch({
+        type: 'instances/destroyed',
+        payload: instance
+    }), 1500)
+}
+
+const HANDLERS = {
+    'application/create': function(request, store) {
+        store.dispatch({
+            type: 'application/created',
+            payload: {
+                id: generateId('application'),
+                name: request.payload.name,
+                color: request.payload.color
+            }
+        });
+    },
+    'server/create': function(request, store) {
+        store.dispatch({
+            type: 'server/created',
+            payload: {
+                id: generateId('server'),
+                status: 'running'
+            }
+        });
     },
     'server/destroy': function(request, store) {
         const serverId = request.payload.id;
@@ -72,21 +117,16 @@ const HANDLERS = {
                     return;
                 }
 
-                store.dispatch({
-                    type: 'instances/created',
-                    payload: {
-                        id: generateId('instance'),
-                        createdAt: Date.now(),
-                        server: availableSlots.shift(),
-                        application: instance.application
-                    }
-                });
+                startInstance(store, instance.application, availableSlots.shift());
             });
         }
 
-        return {
-            id: serverId
-        }
+        store.dispatch({
+            type: 'server/destroyed',
+            payload: {
+                id: serverId
+            }
+        });
     },
     'application/instances/create': function(request, store) {
         const applicationId = request.payload.application;
@@ -107,34 +147,33 @@ const HANDLERS = {
             return;
         }
 
-        const instanceId = generateId('instance');
         const serverId = availableSlots[0];
 
-        return {
-            id: instanceId,
-            createdAt: Date.now(),
-            application: applicationId,
-            server: serverId,
-        }
+        startInstance(store, applicationId, serverId)
     },
     'application/instances/destroy': function(request, store) {
         const applicationId = request.payload.application;
 
         const state = store.getState();
 
-        const instances = state.indexes.instancesByApplication[applicationId];
+        let instances = state.indexes.instancesByApplication[applicationId];
+        if (instances.length === 0) {
+            return;
+        }
+
+        instances = instances.filter((instance) => {
+            return state.entities.instances[instance].status === 'running';
+        });
+
         if (instances.length === 0) {
             return;
         }
 
         const instanceId = instances[instances.length - 1];
-        const serverId = state.indexes.serverByInstance[instanceId];
 
-        return {
-            id: instanceId,
-            application: applicationId,
-            server: serverId
-        };
+        const instance = state.entities.instances[instanceId];
+
+        destroyInstance(store, instance);
     }
 }
 
@@ -146,13 +185,11 @@ const Middleware = (store) => (next) => (action) => {
         return next(action);
     }
 
-    const result = handler(request, store);
-
-    if (result) {
-        store.dispatch({
-            type: request.response,
-            payload: result
-        });
+    try {
+        handler(request, store);
+    } catch(e) {
+        debugger;
+        throw e;
     }
 }
 

@@ -4,7 +4,7 @@ import ApplicationContainer from '../containers/Application';
 
 const Applications = ({ applications }) => {
     return (
-        <ul>
+        <ul className="Applications">
             {applications.map((applicationId) => {
                 return (
                     <li key={applicationId}>

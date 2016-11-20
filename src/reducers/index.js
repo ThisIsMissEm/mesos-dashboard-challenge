@@ -55,7 +55,7 @@ const createableEntity = (name, fallback) => {
             return removeById(state, action.payload.id);
         }
 
-        if (fallback) {
+        if (fallback && action.type && action.type.indexOf(name) === 0) {
             const result = fallback(state, action);
             if (result) {
                 return result;
@@ -102,7 +102,17 @@ const createMapIndex = (actions) => {
 
 const servers = createableEntity('server');
 const applications = createableEntity('application');
-const instances = createableEntity('instances');
+const instances = createableEntity('instances', (state, action) => {
+    if (action.type === 'instances/update-status') {
+        return update(state, {
+            [action.payload.id]: {
+                status: { $set: action.payload.status }
+            }
+        });
+    }
+
+    return state;
+});
 
 const instancesByApplication = createMapIndex({
     create: {

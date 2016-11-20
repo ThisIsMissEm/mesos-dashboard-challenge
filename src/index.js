@@ -14,8 +14,15 @@ for (var i = 0; i < 4; i++) {
 }
 
 // Create the initial applications:
-[ 'hadoop', 'rails', 'chronos', 'storm', 'spark' ].forEach((name) => {
-  store.dispatch(actions.createApplication(name))
+[
+  ['hadoop', '#fb00a0' ],
+  ['rails', '#4332e5' ],
+  ['chronos', '#00acf7' ],
+  ['storm', '#00e2a2' ],
+  ['spark', '#8cd654' ]
+].forEach((config) => {
+  const [name, color] = config;
+  store.dispatch(actions.createApplication(name, color))
 })
 
 if (typeof window !== 'undefined') {
