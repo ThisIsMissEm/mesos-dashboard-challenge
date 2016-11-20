@@ -53,17 +53,23 @@ const startInstance = (store, application, server) => {
 };
 
 const destroyInstance = (store, instance) => {
+    const { id, application, server } = instance;
+
     store.dispatch({
         type: 'instances/update-status',
         payload: {
-            id: instance.id,
+            id,
             status: 'stopping'
         }
     })
 
     setTimeout(() => store.dispatch({
         type: 'instances/destroyed',
-        payload: instance
+        payload: {
+            id,
+            application,
+            server
+        }
     }), 1500)
 }
 

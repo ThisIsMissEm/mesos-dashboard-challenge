@@ -65,6 +65,15 @@ export const createInstance = (application) => {
     }
 }
 
+export const createInstanceByName = (applicationName) => (dispatch, getState) => {
+    const state = getState();
+    const allApplications = state.entities.applications;
+
+    const application = Object.keys(allApplications).find((id) => allApplications[id].name === applicationName);
+
+    return dispatch(createInstance(application));
+}
+
 export const destroyInstance = (application) => {
     return {
         type: 'application/instances/destroy',
