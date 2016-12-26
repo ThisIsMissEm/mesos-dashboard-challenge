@@ -1,0 +1,5 @@
+Hi thanks for opening an issue; This repository contains fairly experimental ideas, and I'd not actively recommend doing things this way in your own project. in the future, I intend to wrote about it over at https://medium.com/@thisismissem
+
+Some of the files, such as api.js and reducers have documentation about their concepts in them, and I'd recommend those as a starting place to be able to figure this repository out.
+
+In a real-world application, I'd actually now be inclined to change my approach to use Selectors via reselect, handle immutable data with immutable.js, and use graphql-anywhere for view rendering.
